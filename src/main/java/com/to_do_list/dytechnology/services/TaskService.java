@@ -1,6 +1,7 @@
 package com.to_do_list.dytechnology.services;
 
 import com.to_do_list.dytechnology.dto.TaskDto;
+import com.to_do_list.dytechnology.exceptions.TaskNotFound;
 import com.to_do_list.dytechnology.model.Task;
 import com.to_do_list.dytechnology.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,12 @@ public class TaskService {
         return taskRepository.findAll();
     }
     public Optional<Task> searchTasksById(Long id){
-        return taskRepository.findById(id);
+        Optional<Task> task = taskRepository.findById(id);
+        if(task.isPresent()){
+            return taskRepository.findById(id);
+        }else {
+            throw new TaskNotFound();
+        }
     }
     public String updateTasksById(long id, TaskDto dataTask){
 
@@ -51,18 +57,16 @@ public class TaskService {
             }
             taskRepository.save(updateTask);
             return "dados alterados!";
-        }else { return "Task não encontrada!";}
+        }else { throw new TaskNotFound();}
     }
     public String deleteTasks(long id) {
-        Task deleteTask = new Task();
-
         Optional task = taskRepository.findById(id);
 
         if (task.isPresent()) {
             taskRepository.deleteById(id);
             return "Task deletada!";
         } else {
-            return "Task não encontrada!";
+            throw new TaskNotFound();
         }
 
     }
