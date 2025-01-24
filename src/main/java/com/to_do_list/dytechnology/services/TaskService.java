@@ -21,19 +21,22 @@ public class TaskService {
     @Autowired
     private TaskDoneRepository taskDoneRepository;
 
-    public String creatTasks(TaskDto dataTask){
+    public List<Task> creatTasks(TaskDto dataTask){
         Task newTask = new Task();
+
         newTask.setName(dataTask.name());
         newTask.setDescription(dataTask.description());
         newTask.setDone(dataTask.done());
         newTask.setPriority(dataTask.priority());
         taskRepository.save(newTask);
-        return"Task created! (Tarefa Criada!)";
+
+        return searchTasks();
     }
 
     public List<Task> searchTasks(){
         return taskRepository.findAll();
     }
+
     public Optional<Task> searchTasksById(Long id){
         Optional<Task> task = taskRepository.findById(id);
         if(task.isPresent()){
@@ -42,8 +45,10 @@ public class TaskService {
             throw new TaskNotFound();
         }
     }
-    public String updateTasksById(long id, TaskDto dataTask) {
+    public List<Task> updateTasksById(long id, TaskDto dataTask) {
+
         Optional<Task> task = taskRepository.findById(id);
+
         if (task.isPresent()) {
             Task updateTask = task.get();
 
@@ -60,19 +65,21 @@ public class TaskService {
                     updateTask.setPriority(dataTask.priority());
                 }
                 taskRepository.save(updateTask);
-                return "dados alterados!";
+                return searchTasks();
             }
         } else{
             throw new TaskNotFound();
         }
-        return null;
+        return searchTasks();
     }
 
-    public String deleteTasks(long id) {
+    public List<Task> deleteTasks(long id) {
+
         Optional task = taskRepository.findById(id);
+
         if (task.isPresent()) {
             taskRepository.deleteById(id);
-            return "Task deletada!";
+            return searchTasks();
         } else {
             throw new TaskNotFound();
         }

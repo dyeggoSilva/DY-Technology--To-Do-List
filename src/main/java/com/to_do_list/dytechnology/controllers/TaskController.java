@@ -15,6 +15,7 @@ import java.util.Optional;
 public class TaskController {
     @Autowired
     private TaskService taskService;
+
     @GetMapping("/tasks")
     public List allTasks(){
         return taskService.searchTasks();
@@ -23,8 +24,6 @@ public class TaskController {
     public Object tasksById(@PathVariable Long id){
         return taskService.searchTasksById(id);
     }
-
-
     @PostMapping("/register-task")
     public Object registerTask(@RequestBody TaskDto dataTask){
         return ResponseEntity.ok(taskService.creatTasks(dataTask));
